@@ -24,9 +24,7 @@
           "path": "src/BinkyLabs.OpenAI.Analyzers/BinkyLabs.OpenAI.Analyzers.csproj",
           "xpath": "//Project/PropertyGroup/Version"
         },
-        {
-          "path": "README.md"
-        }
+        "README.md"
       ]
     }
   },
