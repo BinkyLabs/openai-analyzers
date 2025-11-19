@@ -1,0 +1,10 @@
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.SystemChatMessageAnalyzer() -> void
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageCodeFixProvider
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageCodeFixProvider.SystemChatMessageCodeFixProvider() -> void
+const BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.DiagnosticId = "BOA001" -> string
+override BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext context) -> void
+override BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>
+override sealed BinkyLabs.OpenAI.Analyzers.SystemChatMessageCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string>
+override sealed BinkyLabs.OpenAI.Analyzers.SystemChatMessageCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider
+override sealed BinkyLabs.OpenAI.Analyzers.SystemChatMessageCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task
