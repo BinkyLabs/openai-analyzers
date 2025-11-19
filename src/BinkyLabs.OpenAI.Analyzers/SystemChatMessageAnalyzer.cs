@@ -100,7 +100,7 @@ namespace BinkyLabs.OpenAI.Analyzers
             var firstArgument = argumentList.Arguments[0];
 
             // Direct interpolation check
-            if (HasInterpolation(firstArgument.Expression))
+            if (HasNonConstantInterpolation(context, firstArgument.Expression))
             {
                 var diagnostic = Diagnostic.Create(Rule, firstArgument.Expression.GetLocation());
                 context.ReportDiagnostic(diagnostic);
@@ -126,6 +126,33 @@ namespace BinkyLabs.OpenAI.Analyzers
             // This handles cases where the expression might be wrapped
             return expression.DescendantNodesAndSelf()
                 .Any(node => node is InterpolatedStringExpressionSyntax);
+        }
+
+        private static bool HasNonConstantInterpolation(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
+        {
+            // Find all interpolated string expressions
+            var interpolatedStrings = expression.DescendantNodesAndSelf()
+                .OfType<InterpolatedStringExpressionSyntax>();
+
+            foreach (var interpolatedString in interpolatedStrings)
+            {
+                // Check each interpolation within the string
+                foreach (var content in interpolatedString.Contents)
+                {
+                    if (content is InterpolationSyntax interpolation)
+                    {
+                        // Check if the interpolated expression is a constant
+                        var constantValue = context.SemanticModel.GetConstantValue(interpolation.Expression, context.CancellationToken);
+                        if (!constantValue.HasValue)
+                        {
+                            // Not a constant - this is potentially user input
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static Location FindInterpolatedStringInDataFlow(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)

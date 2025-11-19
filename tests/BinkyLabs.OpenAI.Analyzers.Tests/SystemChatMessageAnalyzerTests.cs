@@ -225,6 +225,24 @@ class TestClass
         await VerifyAnalyzerAsync(test);
     }
 
+    [Fact]
+    public async Task NoDiagnostic_WhenInterpolatingFromConstant()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        const string userInput = ""input"";
+        var message = new SystemChatMessage($""System prompt {userInput}"");
+    }
+}";
+
+        await VerifyAnalyzerAsync(test);
+    }
+
     private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new CSharpAnalyzerTest<SystemChatMessageAnalyzer, DefaultVerifier>
