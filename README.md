@@ -24,7 +24,7 @@ dotnet add package BinkyLabs.OpenAI.Analyzers --prerelease
 
 ```xml
 <!-- x-release-please-start-version -->
-<PackageReference Include="BinkyLabs.OpenAI.Analyzers" Version="1.0.0-preview.3" PrivateAssets="all" />
+<PackageReference Include="BinkyLabs.OpenAI.Analyzers" Version="1.0.0-preview.4" PrivateAssets="all" />
 <!-- x-release-please-end -->
 ```
 

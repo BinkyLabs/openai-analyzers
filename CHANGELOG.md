@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0-preview.4](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.3...v1.0.0-preview.4) (2025-11-19)
+
+
+### Features
+
+* **BOA001:** detect non-constant variables passed to SystemChatMessage ([eaa9f15](https://github.com/BinkyLabs/openai-analyzers/commit/eaa9f1551085625917ef63e138f125818d3c490f))
+* detect string concatenation in BOA001 rule ([ec6176e](https://github.com/BinkyLabs/openai-analyzers/commit/ec6176e337a35ae7877535ae7f3a7f37266e8c67))
+
 ## [1.0.0-preview.3](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.2...v1.0.0-preview.3) (2025-11-19)
 
 
