@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -41,7 +42,11 @@ namespace BinkyLabs.OpenAI.Analyzers
         private static void AnalyzeObjectCreation(SyntaxNodeAnalysisContext context)
         {
             if (context.Node is ObjectCreationExpressionSyntax objectCreation)
-                AnalyzeSystemChatMessageCreation(context, objectCreation.Type, objectCreation.ArgumentList);
+            {
+                // Try to get the type symbol from the entire node first (more reliable for test scenarios)
+                var typeInfo = context.SemanticModel.GetTypeInfo(objectCreation, context.CancellationToken);
+                AnalyzeSystemChatMessageCreation(context, objectCreation.Type, objectCreation.ArgumentList, typeInfo.Type);
+            }
         }
 
         private static void AnalyzeImplicitObjectCreation(SyntaxNodeAnalysisContext context)
@@ -87,34 +92,21 @@ namespace BinkyLabs.OpenAI.Analyzers
             var firstArgument = argumentList.Arguments[0];
             if (HasInterpolation(firstArgument.Expression))
             {
-                var diagnostic = Diagnostic.Create(Rule, firstArgument.GetLocation());
+                var diagnostic = Diagnostic.Create(Rule, firstArgument.Expression.GetLocation());
                 context.ReportDiagnostic(diagnostic);
             }
         }
 
         private static bool HasInterpolation(ExpressionSyntax expression)
         {
-            // Check for interpolated string expressions
+            // Direct check - is this node itself an interpolated string?
             if (expression is InterpolatedStringExpressionSyntax)
                 return true;
 
-            // Check for raw interpolated strings (C# 11+)
-            if (expression.Kind() == SyntaxKind.InterpolatedStringExpression)
-                return true;
-
-            // Check if it's a string that contains interpolation markers
-            var descendantNodes = expression.DescendantNodesAndSelf();
-
-            foreach (var node in descendantNodes)
-            {
-                if (node is InterpolatedStringExpressionSyntax)
-                    return true;
-
-                if (node is InterpolationSyntax)
-                    return true;
-            }
-
-            return false;
+            // Check descendants - does this contain any interpolated strings?
+            // This handles cases where the expression might be wrapped
+            return expression.DescendantNodesAndSelf()
+                .Any(node => node is InterpolatedStringExpressionSyntax);
         }
     }
 }
