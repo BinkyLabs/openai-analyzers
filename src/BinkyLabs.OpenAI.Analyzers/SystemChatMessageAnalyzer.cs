@@ -295,43 +295,43 @@ namespace BinkyLabs.OpenAI.Analyzers
             if (expression is IdentifierNameSyntax identifierName)
             {
                 var symbol = context.SemanticModel.GetSymbolInfo(identifierName, context.CancellationToken).Symbol;
-                
+
                 // Check if it's a local variable or parameter (not a constant)
                 if (symbol is ILocalSymbol localSymbol)
                 {
                     // If it's a const, it's safe
                     if (localSymbol.IsConst)
                         return false;
-                    
+
                     // It's a non-const local variable
                     return true;
                 }
-                
+
                 // Check if it's a parameter
                 if (symbol is IParameterSymbol)
                 {
                     // Parameters are considered non-constant
                     return true;
                 }
-                
+
                 // Check if it's a field or property (also potentially non-constant)
                 if (symbol is IFieldSymbol fieldSymbol)
                 {
                     // Const fields are safe
                     if (fieldSymbol.IsConst)
                         return false;
-                    
+
                     // Non-const fields are potentially user input
                     return true;
                 }
-                
+
                 if (symbol is IPropertySymbol)
                 {
                     // Properties are considered non-constant
                     return true;
                 }
             }
-            
+
             return false;
         }
     }
