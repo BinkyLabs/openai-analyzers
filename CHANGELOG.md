@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-preview.3](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.2...v1.0.0-preview.3) (2025-11-19)
+
+
+### Features
+
+* adds new rule to suggest having a system message last ([a0c63c3](https://github.com/BinkyLabs/openai-analyzers/commit/a0c63c3e88b81328e3fc1655dfccf4a640f2e4d9))
+
+
+### Bug Fixes
+
+* do not report constants for string interpolation ([d6bb51d](https://github.com/BinkyLabs/openai-analyzers/commit/d6bb51df592c89e7139126db9212d7748ffa7d1f))
+
 ## [1.0.0-preview.2](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.1...v1.0.0-preview.2) (2025-11-19)
 
 
