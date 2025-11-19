@@ -98,7 +98,7 @@ namespace BinkyLabs.OpenAI.Analyzers
 
             // Check the first argument for interpolated strings
             var firstArgument = argumentList.Arguments[0];
-            
+
             // Direct interpolation check
             if (HasInterpolation(firstArgument.Expression))
             {
@@ -141,7 +141,7 @@ namespace BinkyLabs.OpenAI.Analyzers
                     if (declaringSyntaxReferences.Length > 0)
                     {
                         var declarationSyntax = declaringSyntaxReferences[0].GetSyntax(context.CancellationToken);
-                        
+
                         // Check if it's a variable declarator
                         if (declarationSyntax is VariableDeclaratorSyntax variableDeclarator)
                         {
