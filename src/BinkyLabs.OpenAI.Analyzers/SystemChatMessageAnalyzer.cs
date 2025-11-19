@@ -107,6 +107,14 @@ namespace BinkyLabs.OpenAI.Analyzers
                 return;
             }
 
+            // Check for string concatenation with non-constant expressions
+            if (HasNonConstantConcatenation(context, firstArgument.Expression))
+            {
+                var diagnostic = Diagnostic.Create(Rule, firstArgument.Expression.GetLocation());
+                context.ReportDiagnostic(diagnostic);
+                return;
+            }
+
             // Check if the argument is a variable that was assigned from ChatMessageContentPart.CreateTextPart
             var interpolatedLocation = FindInterpolatedStringInDataFlow(context, firstArgument.Expression);
             if (interpolatedLocation != null)
@@ -153,6 +161,38 @@ namespace BinkyLabs.OpenAI.Analyzers
             }
 
             return false;
+        }
+
+        private static bool HasNonConstantConcatenation(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
+        {
+            // Find all binary expressions (which includes string concatenation with +)
+            var binaryExpressions = expression.DescendantNodesAndSelf()
+                .OfType<BinaryExpressionSyntax>()
+                .Where(b => b.IsKind(SyntaxKind.AddExpression));
+
+            foreach (var binaryExpression in binaryExpressions)
+            {
+                // Check if this is string concatenation
+                var typeInfo = context.SemanticModel.GetTypeInfo(binaryExpression, context.CancellationToken);
+                if (typeInfo.Type?.SpecialType != SpecialType.System_String)
+                    continue;
+
+                // Check both left and right operands
+                if (!IsConstantExpression(context, binaryExpression.Left) || 
+                    !IsConstantExpression(context, binaryExpression.Right))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsConstantExpression(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
+        {
+            // Check if the expression has a constant value
+            var constantValue = context.SemanticModel.GetConstantValue(expression, context.CancellationToken);
+            return constantValue.HasValue;
         }
 
         private static Location FindInterpolatedStringInDataFlow(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
