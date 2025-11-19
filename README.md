@@ -1,5 +1,8 @@
 # OpenAI Analyzers
 
+[![Build, test and publish dotnet](https://github.com/BinkyLabs/openai-analyzers/actions/workflows/dotnet.yml/badge.svg)](https://github.com/BinkyLabs/openai-analyzers/actions/workflows/dotnet.yml)
+[![NuGet](https://img.shields.io/nuget/v/BinkyLabs.OpenAI.Analyzers.svg)](https://www.nuget.org/packages/BinkyLabs.OpenAI.Analyzers/)
+
 A collection of Roslyn analyzers for detecting security and best practice issues when using the OpenAI .NET SDK.
 
 ## Analyzers
