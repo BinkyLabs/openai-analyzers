@@ -37,7 +37,7 @@ jobs:
       - uses: actions/upload-artifact@v5
         with:
           name: packages
-          path: src/*/bin/Release/*.*nupkg
+          path: src/*/bin/Release/*.nupkg
       - name:  Publish coverage report to GitHub Step Summary
         run: |
            cat reports/coverage/Summary.md >>  $GITHUB_STEP_SUMMARY
@@ -66,6 +66,6 @@ jobs:
       - name: Publish to NuGet
         run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
       - name: Publish to GitHub Packages
-        run: gh release upload ${{ github.ref_name }} lib/bin/Release/*.nupkg lib/bin/Release/*.snupkg tool/bin/Release/*.nupkg tool/bin/Release/*.snupkg --repo ${{ github.repository }} --clobber
+        run: gh release upload ${{ github.ref_name }} lib/bin/Release/*.nupkg --repo ${{ github.repository }} --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
