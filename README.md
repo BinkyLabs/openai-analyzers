@@ -11,16 +11,18 @@ A collection of Roslyn analyzers for detecting security and best practice issues
 
 ## Installation
 
-### In CSProj file
-
-```xml
-<PackageReference Include="BinkyLabs.OpenAI.Analyzers" Version="1.0.0" PrivateAssets="all" />
-```
-
 ### Via the command line
 
 ```shell
 dotnet add package BinkyLabs.OpenAI.Analyzers --prerelease
+```
+
+### In CSProj file
+
+```xml
+<!-- x-release-please-start-version -->
+<PackageReference Include="BinkyLabs.OpenAI.Analyzers" Version="1.0.0.preview.1" PrivateAssets="all" />
+<!-- x-release-please-end-version -->
 ```
 
 ## Building
