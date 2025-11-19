@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Immutable;
+using System.Threading.Tasks;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
+
+using OpenAI.Chat;
 
 using Xunit;
 
@@ -16,13 +19,7 @@ public class SystemChatMessageAnalyzerTests
     public async Task NoDiagnostic_WhenSystemChatMessageHasNoInterpolation()
     {
         var test = @"
-namespace OpenAI.Chat
-{
-    public class SystemChatMessage
-    {
-        public SystemChatMessage(string content) { }
-    }
-}
+using OpenAI.Chat;
 
 class TestClass
 {
@@ -45,13 +42,7 @@ class TestClass
     public async Task Diagnostic_WhenSystemChatMessageHasInterpolation()
     {
         var test = @"
-namespace OpenAI.Chat
-{
-    public class SystemChatMessage
-    {
-        public SystemChatMessage(string content) { }
-    }
-}
+using OpenAI.Chat;
 
 class TestClass
 {
@@ -73,13 +64,7 @@ class TestClass
     public async Task Diagnostic_WhenSystemChatMessageHasRawStringInterpolation()
     {
         var test = @"
-namespace OpenAI.Chat
-{
-    public class SystemChatMessage
-    {
-        public SystemChatMessage(string content) { }
-    }
-}
+using OpenAI.Chat;
 
 class TestClass
 {
@@ -104,13 +89,7 @@ class TestClass
     public async Task NoDiagnostic_WhenUserChatMessageHasInterpolation()
     {
         var test = @"
-namespace OpenAI.Chat
-{
-    public class UserChatMessage
-    {
-        public UserChatMessage(string content) { }
-    }
-}
+using OpenAI.Chat;
 
 class TestClass
 {
@@ -128,13 +107,7 @@ class TestClass
     public async Task Diagnostic_WithImplicitObjectCreation()
     {
         var test = @"
-namespace OpenAI.Chat
-{
-    public class SystemChatMessage
-    {
-        public SystemChatMessage(string content) { }
-    }
-}
+using OpenAI.Chat;
 
 class TestClass
 {
@@ -158,6 +131,10 @@ class TestClass
             TestState =
             {
                 Sources = { source },
+                AdditionalReferences =
+                {
+                    MetadataReference.CreateFromFile(typeof(SystemChatMessage).Assembly.Location),
+                },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
             },
         };
@@ -173,6 +150,10 @@ class TestClass
             TestState =
             {
                 Sources = { source },
+                AdditionalReferences =
+                {
+                    MetadataReference.CreateFromFile(typeof(SystemChatMessage).Assembly.Location),
+                },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
             },
             FixedState =
