@@ -9,8 +9,8 @@ A collection of Roslyn analyzers for detecting security and best practice issues
 
 | Code | Title | Severity | Status |
 | ---- | ----- | -------- | ------ |
-| [BOA001](./rules/BOA001.md) | Avoid inputs in SystemChatMessage | ⚠️ | ✔️ |
-| [BOA002](./rules/BOA002.md) | A `SystemChatMessage` should be last | ⚠️ |  ❌ |
+| [BOA001](./rules/BOA001.md) | Avoid inputs in **SystemChatMessage** | ⚠️ | ✔️ |
+| [BOA002](./rules/BOA002.md) | A **SystemChatMessage** should be last | ⚠️ |  ❌ |
 
 ## Installation
 
