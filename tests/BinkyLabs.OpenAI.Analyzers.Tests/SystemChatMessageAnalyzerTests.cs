@@ -116,6 +116,96 @@ class TestClass
         await VerifyAnalyzerAsync(test, expected);
     }
 
+    [Fact]
+    public async Task Diagnostic_WithTextPartExplicit()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var part = ChatMessageContentPart.CreateTextPart({|#0:$""System prompt {userInput}""|});
+        var message = new SystemChatMessage(part);
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WithTextPartImplicit()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var part = ChatMessageContentPart.CreateTextPart({|#0:$""System prompt {userInput}""|});
+        SystemChatMessage message = new(part);
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WithTextPartListExplicit()
+    {
+        var test = @"
+using OpenAI.Chat;
+using System.Collections.Generic;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var parts = new List<ChatMessageContentPart> { ChatMessageContentPart.CreateTextPart({|#0:$""System prompt {userInput}""|}) };
+        var message = new SystemChatMessage(parts);
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WithTextPartListImplicit()
+    {
+        var test = @"
+using OpenAI.Chat;
+using System.Collections.Generic;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var parts = new List<ChatMessageContentPart> { ChatMessageContentPart.CreateTextPart({|#0:$""System prompt {userInput}""|}) };
+        SystemChatMessage message = new (parts);
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
     private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new CSharpAnalyzerTest<SystemChatMessageAnalyzer, DefaultVerifier>
@@ -126,6 +216,7 @@ class TestClass
                 AdditionalReferences =
                 {
                     MetadataReference.CreateFromFile(typeof(SystemChatMessage).Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(System.ClientModel.Primitives.ActivityExtensions).Assembly.Location),
                 },
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
             },
