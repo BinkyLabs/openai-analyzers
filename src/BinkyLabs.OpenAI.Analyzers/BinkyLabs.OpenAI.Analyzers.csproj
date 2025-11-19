@@ -32,6 +32,17 @@
     <PackageTags>analyzers;code-analysis;openai;ai;gpt;chatgpt;security;</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Prevents the DLL from being added as a compile-time or runtime reference -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    
+    <!-- Suppresses dependency copying -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    
+    <!-- Optional: Makes it clear this is a development-only dependency -->
+    <DevelopmentDependency>true</DevelopmentDependency>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="5.0.0" />
@@ -57,6 +68,12 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="README.md"/>
     <None Include="..\Assets\logo-binkylabs.png" Pack="true" PackagePath="logo-binkylabs.png"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Package the analyzer DLL in the analyzers/dotnet/cs directory -->
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" 
+          PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
 </Project>
