@@ -178,7 +178,7 @@ namespace BinkyLabs.OpenAI.Analyzers
                     continue;
 
                 // Check both left and right operands
-                if (!IsConstantExpression(context, binaryExpression.Left) || 
+                if (!IsConstantExpression(context, binaryExpression.Left) ||
                     !IsConstantExpression(context, binaryExpression.Right))
                 {
                     return true;
