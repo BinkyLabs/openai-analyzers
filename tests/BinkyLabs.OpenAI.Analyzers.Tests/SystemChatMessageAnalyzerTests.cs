@@ -243,6 +243,45 @@ class TestClass
         await VerifyAnalyzerAsync(test);
     }
 
+    [Fact]
+    public async Task Diagnostic_WhenPassingVariableDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var message = new SystemChatMessage({|#0:userInput|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task NoDiagnostic_WhenPassingConstDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        const string userInput = ""input"";
+        var message = new SystemChatMessage(userInput);
+    }
+}";
+
+        await VerifyAnalyzerAsync(test);
+    }
+
     private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new CSharpAnalyzerTest<SystemChatMessageAnalyzer, DefaultVerifier>
