@@ -90,9 +90,20 @@ namespace BinkyLabs.OpenAI.Analyzers
 
             // Check the first argument for interpolated strings
             var firstArgument = argumentList.Arguments[0];
+            
+            // Direct interpolation check
             if (HasInterpolation(firstArgument.Expression))
             {
                 var diagnostic = Diagnostic.Create(Rule, firstArgument.Expression.GetLocation());
+                context.ReportDiagnostic(diagnostic);
+                return;
+            }
+
+            // Check if the argument is a variable that was assigned from ChatMessageContentPart.CreateTextPart
+            var interpolatedLocation = FindInterpolatedStringInDataFlow(context, firstArgument.Expression);
+            if (interpolatedLocation != null)
+            {
+                var diagnostic = Diagnostic.Create(Rule, interpolatedLocation);
                 context.ReportDiagnostic(diagnostic);
             }
         }
@@ -107,6 +118,92 @@ namespace BinkyLabs.OpenAI.Analyzers
             // This handles cases where the expression might be wrapped
             return expression.DescendantNodesAndSelf()
                 .Any(node => node is InterpolatedStringExpressionSyntax);
+        }
+
+        private static Location FindInterpolatedStringInDataFlow(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
+        {
+            // Handle identifier (variable reference)
+            if (expression is IdentifierNameSyntax identifierName)
+            {
+                var symbol = context.SemanticModel.GetSymbolInfo(identifierName, context.CancellationToken).Symbol;
+                if (symbol is ILocalSymbol localSymbol)
+                {
+                    // Find the variable declaration
+                    var declaringSyntaxReferences = localSymbol.DeclaringSyntaxReferences;
+                    if (declaringSyntaxReferences.Length > 0)
+                    {
+                        var declarationSyntax = declaringSyntaxReferences[0].GetSyntax(context.CancellationToken);
+                        
+                        // Check if it's a variable declarator
+                        if (declarationSyntax is VariableDeclaratorSyntax variableDeclarator)
+                        {
+                            if (variableDeclarator.Initializer?.Value != null)
+                            {
+                                var location = FindInterpolatedStringInExpression(context, variableDeclarator.Initializer.Value);
+                                if (location != null)
+                                    return location;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static Location FindInterpolatedStringInExpression(SyntaxNodeAnalysisContext context, ExpressionSyntax expression)
+        {
+            // Check for invocation of ChatMessageContentPart.CreateTextPart
+            if (expression is InvocationExpressionSyntax invocation)
+            {
+                var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken);
+                if (symbolInfo.Symbol is IMethodSymbol methodSymbol)
+                {
+                    // Check if this is CreateTextPart from ChatMessageContentPart
+                    if (methodSymbol.Name == "CreateTextPart" &&
+                        methodSymbol.ContainingType?.Name == "ChatMessageContentPart" &&
+                        methodSymbol.ContainingNamespace?.ToDisplayString() == "OpenAI.Chat")
+                    {
+                        // Check if the argument has interpolation
+                        if (invocation.ArgumentList?.Arguments.Count > 0)
+                        {
+                            var firstArg = invocation.ArgumentList.Arguments[0];
+                            if (HasInterpolation(firstArg.Expression))
+                            {
+                                return firstArg.Expression.GetLocation();
+                            }
+                        }
+                    }
+                }
+            }
+            // Check for object creation expressions (List<ChatMessageContentPart>)
+            else if (expression is ObjectCreationExpressionSyntax objectCreation)
+            {
+                if (objectCreation.Initializer != null)
+                {
+                    foreach (var expr in objectCreation.Initializer.Expressions)
+                    {
+                        var location = FindInterpolatedStringInExpression(context, expr);
+                        if (location != null)
+                            return location;
+                    }
+                }
+            }
+            // Check for implicit object creation expressions
+            else if (expression is ImplicitObjectCreationExpressionSyntax implicitObjectCreation)
+            {
+                if (implicitObjectCreation.Initializer != null)
+                {
+                    foreach (var expr in implicitObjectCreation.Initializer.Expressions)
+                    {
+                        var location = FindInterpolatedStringInExpression(context, expr);
+                        if (location != null)
+                            return location;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
