@@ -206,6 +206,25 @@ class TestClass
         await VerifyAnalyzerAsync(test, expected);
     }
 
+    [Fact]
+    public async Task NoDiagnostic_WithTextPartExplicitAndUserMessage()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var part = ChatMessageContentPart.CreateTextPart({|#0:$""System prompt {userInput}""|});
+        var message = new UserChatMessage(part);
+    }
+}";
+
+        await VerifyAnalyzerAsync(test);
+    }
+
     private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new CSharpAnalyzerTest<SystemChatMessageAnalyzer, DefaultVerifier>
