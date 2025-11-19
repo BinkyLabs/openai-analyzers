@@ -1,5 +1,10 @@
 BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer
 BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.SystemChatMessageAnalyzer() -> void
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageLastAnalyzer
+BinkyLabs.OpenAI.Analyzers.SystemChatMessageLastAnalyzer.SystemChatMessageLastAnalyzer() -> void
 const BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.DiagnosticId = "BOA001" -> string
+const BinkyLabs.OpenAI.Analyzers.SystemChatMessageLastAnalyzer.DiagnosticId = "BOA002" -> string
 override BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext context) -> void
 override BinkyLabs.OpenAI.Analyzers.SystemChatMessageAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>
+override BinkyLabs.OpenAI.Analyzers.SystemChatMessageLastAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext context) -> void
+override BinkyLabs.OpenAI.Analyzers.SystemChatMessageLastAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>
