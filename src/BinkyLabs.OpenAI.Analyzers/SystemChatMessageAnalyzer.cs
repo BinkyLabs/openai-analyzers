@@ -8,9 +8,15 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace BinkyLabs.OpenAI.Analyzers
 {
+    /// <summary>
+	/// Analyzer that detects interpolated strings in SystemChatMessage constructors.
+	/// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SystemChatMessageAnalyzer : DiagnosticAnalyzer
     {
+        /// <summary>
+		/// The diagnostic ID for the analyzer.
+		/// </summary>
         public const string DiagnosticId = "BOA001";
 
         private static readonly LocalizableString Title = "Avoid inputs in SystemChatMessage";
@@ -28,8 +34,10 @@ namespace BinkyLabs.OpenAI.Analyzers
             description: Description,
             helpLinkUri: "https://github.com/BinkyLabs/openai-analyzers/blob/main/rules/BOA001.md");
 
+        /// <inheritdoc />
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
+        /// <inheritdoc />
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
