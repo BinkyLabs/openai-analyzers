@@ -36,11 +36,9 @@
     <!-- Prevents the DLL from being added as a compile-time or runtime reference -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
     
-    <!-- Suppresses dependency copying -->
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    
     <!-- Optional: Makes it clear this is a development-only dependency -->
     <DevelopmentDependency>true</DevelopmentDependency>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -71,9 +69,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Package the analyzer DLL in the analyzers/dotnet/cs directory -->
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" 
-          PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
+  
+  <Target Name="IncludeAnalyzersInPackage" AfterTargets="CoreCompile">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).dll" PackagePath="analyzers/dotnet/cs" />
+    </ItemGroup>
+  </Target>
 
 </Project>
