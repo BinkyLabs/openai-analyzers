@@ -244,6 +244,67 @@ class TestClass
     }
 
     [Fact]
+    public async Task Diagnostic_WhenSystemChatMessageHasStringConcatenation()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var message = new SystemChatMessage({|#0:""foo"" + userInput|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task NoDiagnostic_WhenStringConcatenationWithConstant()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        const string userInput = ""input"";
+        var message = new SystemChatMessage(""foo"" + userInput);
+    }
+}";
+
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WhenSystemChatMessageHasMultipleConcatenations()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var userInput = ""input"";
+        var anotherVar = ""other"";
+        var message = new SystemChatMessage({|#0:""foo"" + userInput + ""bar"" + anotherVar|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
     public async Task Diagnostic_WhenPassingVariableDirectly()
     {
         var test = @"
