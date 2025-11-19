@@ -282,6 +282,89 @@ class TestClass
         await VerifyAnalyzerAsync(test);
     }
 
+    [Fact]
+    public async Task Diagnostic_WhenPassingParameterDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    void TestMethod(string userInput)
+    {
+        var message = new SystemChatMessage({|#0:userInput|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WhenPassingFieldDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    private string _userInput = ""input"";
+
+    void TestMethod()
+    {
+        var message = new SystemChatMessage({|#0:_userInput|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
+    [Fact]
+    public async Task NoDiagnostic_WhenPassingConstFieldDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    private const string SystemPrompt = ""You are a helpful assistant."";
+
+    void TestMethod()
+    {
+        var message = new SystemChatMessage(SystemPrompt);
+    }
+}";
+
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task Diagnostic_WhenPassingPropertyDirectly()
+    {
+        var test = @"
+using OpenAI.Chat;
+
+class TestClass
+{
+    public string UserInput { get; set; } = ""input"";
+
+    void TestMethod()
+    {
+        var message = new SystemChatMessage({|#0:UserInput|});
+    }
+}";
+
+        var expected = new DiagnosticResult(SystemChatMessageAnalyzer.DiagnosticId, DiagnosticSeverity.Warning)
+            .WithLocation(0);
+
+        await VerifyAnalyzerAsync(test, expected);
+    }
+
     private static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
     {
         var test = new CSharpAnalyzerTest<SystemChatMessageAnalyzer, DefaultVerifier>
