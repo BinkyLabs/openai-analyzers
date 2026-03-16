@@ -438,7 +438,7 @@ class TestClass
                     MetadataReference.CreateFromFile(typeof(SystemChatMessage).Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(System.ClientModel.Primitives.ActivityExtensions).Assembly.Location),
                 },
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net100,
             },
         };
 
