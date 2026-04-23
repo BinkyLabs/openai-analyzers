@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.0-preview.5](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.4...v1.0.0-preview.5) (2026-04-23)
+
+
+### Features
+
+* **tests:** migrate to Microsoft Testing Platform ([2b2b5ab](https://github.com/BinkyLabs/openai-analyzers/commit/2b2b5abad42cc1c370c50c05ab570a1f62e755e5))
+* **tests:** migrate to Microsoft Testing Platform ([5136b5a](https://github.com/BinkyLabs/openai-analyzers/commit/5136b5a79989ebe608930f1e8765512c8e9cc1d1))
+* **tests:** migrate xunit and runner to v3 ([ddef8a6](https://github.com/BinkyLabs/openai-analyzers/commit/ddef8a635dc32fdaf51be42aa78afe69b98d88ec))
+* **tests:** migrate xunit to v3 and forward CancellationToken in async tests ([d6598f5](https://github.com/BinkyLabs/openai-analyzers/commit/d6598f5388d04683cb11210e23485fc371708408))
+
 ## [1.0.0-preview.4](https://github.com/BinkyLabs/openai-analyzers/compare/v1.0.0-preview.3...v1.0.0-preview.4) (2025-11-19)
 
 
